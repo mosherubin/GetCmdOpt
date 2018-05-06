@@ -8,7 +8,7 @@ This is a lightweight C++ option parser library, written in standard C++ to be u
 Command line options have a mandatory `key` followed by zero or more optional `values`, all delimited by spaces.  Values can be integers, doubles, or strings.  Here are some examples of key/value pairs that can be parsed from the command line.  Here's what a real-life command line might look like:
 
 ```
---width 174 --days 3 4 7 8 --radius 3.1415 --distance 3.1415 7.2 -22 123.456 --dirs foo/bar --dirs foo/bar baz\\wam "c:\\Program Files\\SuperApp" --enable-trace --somethingelse --flag 1 --flag 0 --flag qwerty
+--width 174 --days 3 4 7 8 --radius 3.1415 --distance 3.1415 7.2 -22 123.456 --folder foo/bar --dirs foo/bar baz\\wam "c:\\Program Files\\SuperApp" --enable-trace --somethingelse --flag-1 1 --flag-2 0 --flag-3 qwerty
 ```
 
 Here is the same command line, parsed into key/value(s) pairs:
@@ -64,14 +64,14 @@ The following table shows what the command key/values would look like:
 |---|---|---|---|
 | Integer | `--width 174` | Single integer value | GetInt |
 | Integer Vector | `--days 3 4 7 8` | Multiple integer values | GetIntVector |
-| Double | `--distance 3.1415` | Single double value | GetDouble |
+| Double | `--radius 3.1415` | Single double value | GetDouble |
 | Double Vector | `--distance 3.1415 7.2 -22 123.456` | Multiple double values | GetDoubleVector |
-| String | `--dirs foo/bar` | Single string value | GetString |
+| String | `--folder foo/bar` | Single string value | GetString |
 | String Vector | `--dirs foo/bar baz\\wam "c:\\Program Files\\SuperApp"` | Multiple string values | GetStringVector |
 | Bool | `--enable-trace --somethingelse` | true, `enable-trace` has no value | GetBool |
-| Bool | `--flag 1` | true, `--enable-trace` value is not "0" | GetBool |
-| Bool | `--flag 0` | false, `--enable-trace` value is "0" | GetBool |
-| Bool | `--flag qwerty` | true, `--enable-trace` value is not "0" | GetBool |
+| Bool | `--flag-1 1` | true, `--enable-trace` value is not "0" | GetBool |
+| Bool | `--flag-2 0` | false, `--enable-trace` value is "0" | GetBool |
+| Bool | `--flag-3 qwerty` | true, `--enable-trace` value is not "0" | GetBool |
 
 ### Single-Value Parse: GetInt, GetDouble, GetString, GetBool
 
