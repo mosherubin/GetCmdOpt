@@ -234,3 +234,95 @@ TEST_F(TestFixture, Test_Number_ChangeKeyPrefix) {
 	ASSERT_TRUE(vec[4] = 5.5);
 	ASSERT_TRUE(vec[5] = -6.0);
 }
+
+TEST_F(TestFixture, Test_Bool_No_Value) {
+	CreateOpts("--flag");
+
+	ASSERT_TRUE(opts->GetBool("flag"));
+}
+
+TEST_F(TestFixture, Test_Bool_No_Value_Followed_by_Key) {
+	CreateOpts("--flag --key");
+
+	ASSERT_TRUE(opts->GetBool("flag"));
+}
+
+TEST_F(TestFixture, Test_Bool_Zero_Value) {
+	CreateOpts("--flag 0");
+
+	ASSERT_FALSE(opts->GetBool("flag"));
+}
+
+TEST_F(TestFixture, Test_Bool_Non_Zero_Value_1) {
+	CreateOpts("--flag 1");
+
+	ASSERT_TRUE(opts->GetBool("flag"));
+}
+
+TEST_F(TestFixture, Test_Bool_Non_Zero_Value_2) {
+	CreateOpts("--flag 7");
+
+	ASSERT_TRUE(opts->GetBool("flag"));
+}
+
+TEST_F(TestFixture, Test_Bool_Non_Zero_Value_3) {
+	CreateOpts("--flag foobar");
+
+	ASSERT_TRUE(opts->GetBool("flag"));
+}
+
+TEST_F(TestFixture, Test_Bool_Identical_Keys_1) {
+	CreateOpts("--flag --flag 0");
+
+	ASSERT_TRUE(opts->GetBool("flag"));
+}
+
+TEST_F(TestFixture, Test_Bool_Identical_Keys_2) {
+	CreateOpts("--flag 0 --flag");
+
+	ASSERT_FALSE(opts->GetBool("flag"));
+}
+
+TEST_F(TestFixture, Test_Bool_Identical_Keys_3) {
+	CreateOpts("--flag 1 --flag");
+
+	ASSERT_TRUE(opts->GetBool("flag"));
+}
+
+TEST_F(TestFixture, Test_Bool_Identical_Keys_4) {
+	CreateOpts("--flag false");
+
+	ASSERT_TRUE(opts->GetBool("flag"));
+}
+
+TEST_F(TestFixture, Test_Int_Too_Large) {
+	CreateOpts("--val 2147483648");
+
+	int val;
+
+	ASSERT_FALSE(opts->GetInt("val", val));
+}
+
+TEST_F(TestFixture, Test_Int_Invalid) {
+	CreateOpts("--val foobar");
+
+	int val;
+
+	ASSERT_FALSE(opts->GetInt("val", val));
+}
+
+TEST_F(TestFixture, Test_Number_Invalid) {
+	CreateOpts("--val foobar");
+
+	double val;
+
+	ASSERT_FALSE(opts->GetNumber("val", val));
+}
+
+TEST_F(TestFixture, Test_String_Empty) {
+	CreateOpts("--str --val 123");
+
+	std::string str = "qqq";
+
+	ASSERT_FALSE(opts->GetString("str", str));
+}

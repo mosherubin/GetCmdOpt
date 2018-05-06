@@ -12,22 +12,24 @@ public:
 	GetCmdOpt (int argc, char *argv [], std::string keyStart = "--");
 	~GetCmdOpt ();
 
-	bool GetInt (char *p, int& i);
-	bool GetIntVector (char *p, std::vector<int> &vec);
-	bool GetNumber (char *p, double& d);
-	bool GetNumberVector (char *p, std::vector<double> &vec);
-	bool GetString (char *p, std::string &s);
-	bool GetStringVector (char *p, std::vector<std::string> &vec);
-	bool GetBool (char *p);
+	bool GetInt (const char *p, int& i);
+	bool GetIntVector (const char *p, std::vector<int> &vec);
+	bool GetNumber (const char *p, double& d);
+	bool GetNumberVector (const char *p, std::vector<double> &vec);
+	bool GetString (const char *p, std::string &s);
+	bool GetStringVector (const char *p, std::vector<std::string> &vec);
+	bool GetBool (const char *p);
 
 protected:
 	int m_argc;
 	char **m_argv;
 	std::string m_keyStart;
 
-	bool FindKey (char *p, int *pIndex);
+	bool FindKey (const char *p, int *pIndex);
 	bool ReturnValueToken (int iIndex, const char **pToken);
 	bool TokenStartWithKeyPrefix(char *token);
+	int ReturnMaximumIntValue();
+	bool ConvertStringToInt(const char *s, int &i);
 
 private:
 	GetCmdOpt (const GetCmdOpt&);

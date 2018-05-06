@@ -4,6 +4,10 @@
 #include <vector>
 #include <string>
 
+#if !defined(_WIN32)
+#include <limits.h>
+#endif
+
 #include "GetCmdOpt.h"
 
 #pragma message ("Need to differentiate between a boolean flag and a similarly-named integer flag")
@@ -35,7 +39,51 @@ GetCmdOpt::~GetCmdOpt ()
 	delete[] m_argv;
 }
 
-bool GetCmdOpt::GetInt (char *p, int& i)
+int GetCmdOpt::ReturnMaximumIntValue()
+{
+#ifdef _WIN32
+	return INT32_MAX;
+#else
+	return INT_MAX;
+#endif
+}
+
+bool GetCmdOpt::ConvertStringToInt(const char *s, int &i)
+{
+	long result;
+	char *endPtr;
+
+	result = strtol(s, &endPtr, 0);
+	if (result == 0)
+	{
+		// Possible conversion error, or <s> indeed represented zero,
+		// we need to determine which.
+		if (endPtr == s)
+		{
+			// Conversion error
+			return false;
+		}
+	}
+
+	if (errno == ERANGE)
+	{
+		// Out of the range of representable values by a long int
+		return false;
+	}
+
+	long maxVal = (long) ReturnMaximumIntValue();
+	if (result > maxVal)
+	{
+		// Value overflow
+		return false;
+	}
+
+	i = (int) result;
+
+	return true;
+}
+
+bool GetCmdOpt::GetInt (const char *p, int& i)
 {
 	int iIndex;
 	const char *pToken;
@@ -51,15 +99,14 @@ bool GetCmdOpt::GetInt (char *p, int& i)
 	// So we found the option key.  Return next field as value, if valid.
 	if (ReturnValueToken (iIndex + 1, &pToken))
 	{
-		i = atoi (pToken);
-		Ret = true;
+		Ret = ConvertStringToInt(pToken, i);
 	}
 
 exit:
 	return Ret;
 }
 
-bool GetCmdOpt::GetIntVector (char *p, std::vector<int> &vec)
+bool GetCmdOpt::GetIntVector (const char *p, std::vector<int> &vec)
 {
 	// Return all integer instances of a specific key.
 
@@ -99,7 +146,7 @@ bool GetCmdOpt::GetIntVector (char *p, std::vector<int> &vec)
 	return (vec.size () > 0);
 }
 
-bool GetCmdOpt::GetNumber (char *p, double& d)
+bool GetCmdOpt::GetNumber (const char *p, double& d)
 {
 	int iIndex;
 	const char *pToken;
@@ -111,7 +158,8 @@ bool GetCmdOpt::GetNumber (char *p, double& d)
 	// So we found the option key.  Return next field as value, if valid.
 	if (ReturnValueToken (iIndex + 1, &pToken))
 	{
-		if (sscanf (pToken, "%lf", &d) != EOF)
+		int result = sscanf(pToken, "%lf", &d);
+		if ((result == 1) && (result != EOF))
 			Ret = true;
 	}
 
@@ -119,7 +167,7 @@ exit:
 	return Ret;
 }
 
-bool GetCmdOpt::GetNumberVector (char *p, std::vector<double> &vec)
+bool GetCmdOpt::GetNumberVector (const char *p, std::vector<double> &vec)
 {
 	// Return all integer instances of a specific key.
 
@@ -160,7 +208,7 @@ bool GetCmdOpt::GetNumberVector (char *p, std::vector<double> &vec)
 	return (vec.size () > 0);
 }
 
-bool GetCmdOpt::GetString (char *p, std::string &s)
+bool GetCmdOpt::GetString (const char *p, std::string &s)
 {
 	// Return a string following a key.  Double-quote delimited strings are
 	// automatically handled because DOS parses them correctly.
@@ -185,7 +233,7 @@ bool GetCmdOpt::GetString (char *p, std::string &s)
 	return false;
 }
 
-bool GetCmdOpt::GetStringVector (char *p, std::vector<std::string>& vec)
+bool GetCmdOpt::GetStringVector (const char *p, std::vector<std::string>& vec)
 {
 	// Return all string instances of a specific key.  Double-quote delimited strings are
 	// automatically handled because DOS parses them correctly.
@@ -226,22 +274,28 @@ bool GetCmdOpt::GetStringVector (char *p, std::vector<std::string>& vec)
 	return (vec.size () > 0);
 }
 
-bool GetCmdOpt::GetBool (char *p)
+bool GetCmdOpt::GetBool (const char *p)
 {
-	bool Ret = false;
+	int iIndex;
+	const char *pToken;
 
 	assert (p);
 	if (!p)
-		goto exit;
+		return false;
 
-	if (FindKey (p, NULL))
-		Ret = true;
+	if (!FindKey(p, &iIndex))
+		return false;
 
-exit:
-	return Ret;
+	if (!ReturnValueToken(iIndex+1, &pToken))
+	{
+		// There is no value token following the boolean key
+		return true;
+	}
+
+	return (strcmp(pToken, "0") != 0);
 }
 
-bool GetCmdOpt::FindKey (char *p, int *piIndex)
+bool GetCmdOpt::FindKey (const char *p, int *piIndex)
 {
 	int i;
 	std::string strKey;
