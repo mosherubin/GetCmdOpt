@@ -40,13 +40,13 @@ Create a GetCmdOpt instance from the main() function's `argc` and `argv` argumen
       ...
     }
 
-At this point the command line has been parsed.  The application should now call the appropriate `GetCmdOpt` public functions to return the keys/values it needs.
+At this point the command line has been parsed.  The application should now call the appropriate `GetCmdOpt` public functions to return the keys/values it needs.  See the section entitled "Parsing Functions Supported by GetCmdOpt" for the functions you can now call on `opt`.
 
 By default, command-line options are declared by prefixing them with the string '--' followed by zero or more values.  Here is an example of a valid and complete command line:
 
     --rows 10 --fleet 1 2 3 --flag --verbose 0 --I ..\\foo\\bar \"c:\\Program Files\\blah\" --ratio 12.34 --height 1.2 3.4 777.888999
 
-## Parsing Functions Suported by GetCmdOpts
+## Parsing Functions Supported by GetCmdOpt
 
 ## Member Functions
 
