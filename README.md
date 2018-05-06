@@ -8,7 +8,7 @@ This is a lightweight C++ option parser library, written in standard C++ to be u
 Command line options have a mandatory `key` followed by zero or more optional `values`, all delimited by spaces.  Values can be integers, doubles, or strings.  Here are some examples of key/value pairs that can be parsed from the command line.  Here's what a real-life command line might look like:
 
 ```
---width 174 --days 3 4 7 8 --distance 3.1415 --distance 3.1415 7.2 -22 123.456 --dirs foo/bar --dirs foo/bar baz\\wam "c:\\Program Files\\SuperApp" --enable-trace --somethingelse --flag 1 --flag 0 --flag qwerty
+--width 174 --days 3 4 7 8 --radius 3.1415 --distance 3.1415 7.2 -22 123.456 --dirs foo/bar --dirs foo/bar baz\\wam "c:\\Program Files\\SuperApp" --enable-trace --somethingelse --flag 1 --flag 0 --flag qwerty
 ```
 
 Here is the same command line, parsed into key/value(s) pairs:
@@ -16,14 +16,15 @@ Here is the same command line, parsed into key/value(s) pairs:
 ```
 --width 174
 --days 3 4 7 8
---distance 3.1415
+--radius 3.1415
 --distance 3.1415 7.2 -22 123.456
---dirs foo/bar
+--folder foo/bar
 --dirs foo/bar baz\\wam "c:\\Program Files\\SuperApp"
---enable-trace --somethingelse
---flag 1
---flag 0
---flag qwerty
+--enable-trace
+--somethingelse
+--flag-1 1
+--flag-2 0
+--flag-3 qwerty
 ```
 
 The key prefix, by default '--', can be modified by the developer (a default of '--' is preferred over '-' to allow negative numbers as values without mixing up the parser).
@@ -57,7 +58,7 @@ By default, command-line options are declared by prefixing them with the string 
 | **Single** | GetInt | GetDouble | GetString | GetBool |
 | **Vector** | GetIntVector | GetDoubleVector | GetStringVector  | --- |
 
-The following table shows what the command key/values would liik like:
+The following table shows what the command key/values would look like:
 
 | Type | Option Form | Comment | Use Function ... |
 |---|---|---|---|
@@ -72,9 +73,28 @@ The following table shows what the command key/values would liik like:
 | Bool | `--flag 0` | false, `--enable-trace` value is "0" | GetBool |
 | Bool | `--flag qwerty` | true, `--enable-trace` value is not "0" | GetBool |
 
-### Single-Value Parse: GetInt, GetDouble, GetString
+### Single-Value Parse: GetInt, GetDouble, GetString, GetBool
 
+*bool GetInt (const char *key, int& i)*
+*bool GetDouble (const char *key, double& d)*
+*bool GetString (const char *key, std::string &s)*
+*bool GetBool (const char *key, bool &b)*
 
+**Description**
+
+Each of these functions takes a `key` and a reference to a variable of the desired data type (e.g., int, double, std::string, bool).
+
+**Parameters**
+
+    key    [in] A string corresponding to a command line option key, without the leading key prefix.  For example, 
+           if the command line has an option "--date", the `key` string would be "date".
+           
+    value  [out] A reference to the desired data type expected
+    
+**Return Value**
+
+On success, the function returns a boolean value of `true`, and the out parameter `value` is set to the parsed value.
+If the parsing operation failed, a boolean value of `false` is returned.
 
 ### Multiple-Value Parse: GetIntVector, GetDoubleVector, GetStringVector
 
@@ -176,7 +196,7 @@ enable-trace is TRUE
 foobar is TRUE
 foo is FALSE
 day is "Tuesday"
-vecInclude:
+vecInclude:2^31
         [0] ..\foo\bar
         [1] c:\a\b\c\baz
         [2] c:\Program Files\blah
@@ -187,6 +207,10 @@ vecHeights:
         [2] 5.600000
         [3] 777.888999
 ```
+
+# Caveats
+
+* The largest integer that `GetInt` can parse is `2147483647` (max int = 2^31 - 1)
 
 # TODO list
 
