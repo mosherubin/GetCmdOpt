@@ -84,7 +84,18 @@ The following table shows what the command key/values would look like:
 
 **Description**
 
-Each of these functions takes a `key` and a reference to a variable of the desired data type (e.g., int, double, std::string, bool).
+Each of these functions takes a `key` and a reference to a variable of the desired data type (e.g., int, double, std::string, bool). If the function call succeeds, the parsed value will be returned in the out parameter.
+
+If there are multiple occurrences of the key, only the first value will be returned.  Subsequence keys with the name will be ignored.
+
+The `GetBool` function differs from the other functions that the key can be followed by an optional value.  If there is no value, the boolean value for that key defaults to `true`.  If the value is a string of zeroes (i.e., it is a string whose characters are all '0') then the boolean value is set to `false`.  In all other cases it is set to `true`.  The following table summarizes the rules for `GetBool`:
+
+| Type | Option Form | Comment | Use Function ... |
+|---|---|---|---|
+| Bool | `--enable-trace --somethingelse` | true, `enable-trace` has no value | GetBool |
+| Bool | `--flag-1 1` | true, `--enable-trace` value is not "0" | GetBool |
+| Bool | `--flag-2 0` | false, `--enable-trace` value is "0" | GetBool |
+| Bool | `--flag-3 qwerty` | true, `--enable-trace` value is not "0" | GetBool |
 
 **Parameters**
 
@@ -99,6 +110,28 @@ On success, the function returns a boolean value of `true`, and the out paramete
 If the parsing operation failed, a boolean value of `false` is returned.
 
 ### Multiple-Value Parse: GetIntVector, GetDoubleVector, GetStringVector
+
+```
+*bool GetIntVector (const char *p, std::vector<int> &vec)*
+*bool GetDoubleVector (const char *p, std::vector<double> &vec)*
+*bool GetStringVector (const char *p, std::vector<std::string> &vec)*
+```
+
+**Description**
+
+Each of these functions takes a `key` and a reference to an `std::vector` variable of the desired data type.  If the function call succeeds, all values associated with the key will be returned in the out parameter.  If the key occurs more than once, all the values associated with all the key occurrences are returned.
+
+**Parameters**
+
+    key    [in] A string corresponding to a command line option key, without the leading key prefix.  For example, 
+           if the command line has an option "--date", the `key` string would be "date".
+           
+    vec    [out] A reference to an `std::vector<>` matching the desired data type
+    
+**Return Value**
+
+On success, the function returns a boolean value of `true`, and the out parameter `vec` contains all is set to the parsed value.
+If the parsing operation failed, a boolean value of `false` is returned.
 
 ### Parsing Boolean Keys
 
@@ -213,6 +246,7 @@ vecHeights:
 # Caveats
 
 * The largest integer that `GetInt` can parse is `2147483647` (max int = 2^31 - 1)
+* If a key occurs more than once
 
 # TODO list
 
