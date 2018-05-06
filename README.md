@@ -92,10 +92,10 @@ The `GetBool` function differs from the other functions that the key can be foll
 
 | Type | Option Form | Comment | Use Function ... |
 |---|---|---|---|
-| Bool | `--enable-trace --somethingelse` | true, `enable-trace` has no value | GetBool |
-| Bool | `--flag-1 1` | true, `--enable-trace` value is not "0" | GetBool |
-| Bool | `--flag-2 0` | false, `--enable-trace` value is "0" | GetBool |
-| Bool | `--flag-3 qwerty` | true, `--enable-trace` value is not "0" | GetBool |
+| bool | `--enable-trace --somethingelse` | true, `enable-trace` has no value | GetBool |
+| bool | `--foo 1` | true, `--foo` value is not "0" | GetBool |
+| bool | `--bar 0` | false, `--bar` value is "0" | GetBool |
+| bool | `--baz qwerty` | true, `--baz` value is not "0" | GetBool |
 
 **Parameters**
 
