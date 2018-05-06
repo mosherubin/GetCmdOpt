@@ -72,11 +72,11 @@ The following table shows what the command key/values would liik like:
 | Bool | `--flag 0` | false, `--enable-trace` value is "0" | GetBool |
 | Bool | `--flag qwerty` | true, `--enable-trace` value is not "0" | GetBool |
 
-### Single-Value Parse: GetInt, GetString, GetDouble
+### Single-Value Parse: GetInt, GetDouble, GetString
 
 
 
-### Multiple-Value Parse: GetIntVector, getStringVector, GetDoubleVector
+### Multiple-Value Parse: GetIntVector, GetDoubleVector, GetStringVector
 
 ### Parsing Boolean Keys
 
