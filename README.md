@@ -75,10 +75,12 @@ The following table shows what the command key/values would look like:
 
 ### Single-Value Parse: GetInt, GetDouble, GetString, GetBool
 
-*bool GetInt (const char *key, int& i)*
-*bool GetDouble (const char *key, double& d)*
-*bool GetString (const char *key, std::string &s)*
-*bool GetBool (const char *key, bool &b)*
+```
+*bool GetInt (const char *key, int& i)*  
+*bool GetDouble (const char *key, double& d)*  
+*bool GetString (const char *key, std::string &s)*  
+*bool GetBool (const char *key, bool &b)*  
+```
 
 **Description**
 
