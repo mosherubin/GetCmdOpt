@@ -55,6 +55,14 @@ By default, command-line options are declared by prefixing them with the string 
 | Bool | ```--flag 0``` | false, ```--enable-trace``` value is "0" | GetBool |
 | Bool | ```--flag qwerty``` | true, ```--enable-trace``` value is not "0" | GetBool |
 
+## Member Functions
+
+### Single-Value Parse: GetInt, GetString, GetNumber
+
+### Multiple-Value Parse: GetIntVector, getStringVector, GetNumberVector
+
+### Parsing Boolean Keys
+
 ## Coding Example
 
 ```
@@ -162,19 +170,6 @@ vecHeights:
         [2] 5.600000
         [3] 777.888999
 ```
-## Member Functions
-
-### Single-Value Parse: GetInt, GetString, GetNumber
-
-### Multiple-Value Parse: GetIntVector, getStringVector, GetNumberVector
-
-### Parsing Boolean Keys
-
-
-Boolean options have a default implicit value of `"true"`, which can be
-overridden. The effect is that writing `-o` by itself will set option `o` to
-`true`. However, they can also be written with various strings using either
-`=value` or the next argument.
 
 # TODO list
 
