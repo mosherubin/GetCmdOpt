@@ -3,22 +3,22 @@ Simple, light, cross-platform C++ class for parsing command line options
 
 # Quick start
 
-This is a lightweight C++ option parser library, written in standard C++ to be used cross platform (avoiding the problem that GetOpts is not natively supported on Windows).
+This is a lightweight C++ option parser library, written in standard C++ to be used cross platform (avoiding the problem that GetOpts is not natively supported on Windows).  ```GetCmdOpt``` supports retrieving multiple values for a single option key.
 
-Command line options have a mandatory ```key``` and zero or more optional ```values```, all delimited by spaces.  Values can be integers, doubles, or strings.  Here are some examples with their corresponding explanations:
+Command line options have a mandatory ```key``` followed by zero or more optional ```values```, all delimited by spaces.  Values can be integers, doubles, or strings.  Here are some examples of key/value pairs that can be parsed from the command line:
 
-| Type | Option Form | Comment | Use Function ... |
-|---|---|---|---|
-| Integer | ```--width 174``` | Single integer value | GetInt |
-| Integer Vector | ```--days 3 4 7 8``` | Multiple integer values | GetIntVector |
-| Double | ```--distance 3.1415``` | Single double value | GetNumber |
-| Double Vector | ```--distance 3.1415``` | Multiple double values | GetNumberVector |
-| String | ```--dirs foo/bar``` | Single string value | GetString |
-| String Vector | ```--dirs foo/bar baz\\wam "c:\\Program Files\\SuperApp"``` | Multiple string values | GetStringVector |
-| Bool | ```--enable-trace``` | true | GetBool |
-| Bool | ```--flag 1``` | true | GetBool |
-| Bool | ```--flag 0``` | false | GetBool |
-| Bool | ```--flag qwerty``` | true | GetBool |
+````
+--width 174
+--days 3 4 7 8
+--distance 3.1415
+--distance 3.1415 7.2 -22 123.456
+--dirs foo/bar
+--dirs foo/bar baz\\wam "c:\\Program Files\\SuperApp"
+--enable-trace --somethingelse
+--flag 1
+--flag 0
+--flag qwerty
+````
 
 The key prefix, by default '--', can be modified by the developer (a default of '--' is preferred over '-' to allow negative numbers as values without mixing up the parser).
 
@@ -36,9 +36,24 @@ Create a GetCmdOpt instance from the main() function's ```argc``` and ```argv```
 
 At this point the command line has been parsed.  The application should now call the appropriate ```GetCmdOpt``` public functions to return the keys/values it needs.
 
-By default, command-line options are declared by prefixing them with the string '--' followed by zero or more values.  Here is an example of a valid command line:
+By default, command-line options are declared by prefixing them with the string '--' followed by zero or more values.  Here is an example of a valid and complete command line:
 
     --rows 10 --fleet 1 2 3 --flag --verbose 0 --I ..\\foo\\bar \"c:\\Program Files\\blah\" --ratio 12.34 --height 1.2 3.4 777.888999
+
+## Parsing Functions Suported by GetCmdOpts
+
+| Type | Option Form | Comment | Use Function ... |
+|---|---|---|---|
+| Integer | ```--width 174``` | Single integer value | GetInt |
+| Integer Vector | ```--days 3 4 7 8``` | Multiple integer values | GetIntVector |
+| Double | ```--distance 3.1415``` | Single double value | GetNumber |
+| Double Vector | ```--distance 3.1415 7.2 -22 123.456``` | Multiple double values | GetNumberVector |
+| String | ```--dirs foo/bar``` | Single string value | GetString |
+| String Vector | ```--dirs foo/bar baz\\wam "c:\\Program Files\\SuperApp"``` | Multiple string values | GetStringVector |
+| Bool | ```--enable-trace --somethingelse``` | true, ```enable-trace``` has no value | GetBool |
+| Bool | ```--flag 1``` | true, ```--enable-trace``` value is not "0" | GetBool |
+| Bool | ```--flag 0``` | false, ```--enable-trace``` value is "0" | GetBool |
+| Bool | ```--flag qwerty``` | true, ```--enable-trace``` value is not "0" | GetBool |
 
 ## Coding Example
 
@@ -147,29 +162,14 @@ vecHeights:
         [2] 5.600000
         [3] 777.888999
 ```
-## Default and implicit values
+## Member Functions
 
-An option can be declared with a default or an implicit value, or both.
+### Single-Value Parse: GetInt, GetString, GetNumber
 
-A default value is the value that an option takes when it is not specified
-on the command line. The following specifies a default value for an option:
+### Multiple-Value Parse: GetIntVector, getStringVector, GetNumberVector
 
-    cxxopts::value<std::string>()->default_value("value")
+### Parsing Boolean Keys
 
-An implicit value is the value that an option takes when it is given on the
-command line without an argument. The following specifies an implicit value:
-
-    cxxopts::value<std::string>()->implicit_value("implicit")
-
-If an option had both, then not specifying it would give the value `"value"`,
-writing it on the command line as `--option` would give the value `"implicit"`,
-and writing `--option=another` would give it the value `"another"`.
-
-Note that the default and implicit value is always stored as a string,
-regardless of the type that you want to store it in. It will be parsed as
-though it was given on the command line.
-
-## Boolean values
 
 Boolean options have a default implicit value of `"true"`, which can be
 overridden. The effect is that writing `-o` by itself will set option `o` to
