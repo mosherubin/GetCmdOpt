@@ -133,11 +133,9 @@ Each of these functions takes a `key` and a reference to an `std::vector` variab
 On success, the function returns a boolean value of `true`, and the out parameter `vec` contains all is set to the parsed value.
 If the parsing operation failed, a boolean value of `false` is returned.
 
-### Parsing Boolean Keys
-
 ## Coding Example
 
-`
+```
 #include "GetCmdOpt.h"
 
 // Demoing GetCmdOpt with the command line:
@@ -211,7 +209,7 @@ int main(int argc, char *argv[])
         printf("\t[%d] %f\n", i, vecHeights[i]);
     }
 }
-`
+```
 
 Here is the expected output of the above program:
 
@@ -243,11 +241,7 @@ vecHeights:
         [3] 777.888999
 ```
 
-# Caveats
+# Tips / Tricks / Caveats
 
 * The largest integer that `GetInt` can parse is `2147483647` (max int = 2^31 - 1)
-* If a key occurs more than once
-
-# TODO list
-
-* <need to fill in>
+* If a key occurs more than once, a `Get*Vector` function call will return **all** values associated with the key.
