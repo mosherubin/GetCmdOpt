@@ -5,15 +5,6 @@ Simple, light, cross-platform C++ class for parsing command line options
 
 This is a lightweight C++ option parser library, written in standard C++ to be used cross platform (avoiding the problem that GetOpts is not natively supported on Windows).  `GetCmdOpt` supports retrieving multiple values for a single option key.
 
-Command line options have a mandatory `key` followed by zero or more optional `values`, all delimited by spaces.  Values can be integers, doubles, or strings.  Here are some examples of key/value pairs that can be parsed from the command line:
-
-# GetCmdOpt
-Simple, light, cross-platform C++ class for parsing command line options
-
-# Quick start
-
-This is a lightweight C++ option parser library, written in standard C++ to be used cross platform (avoiding the problem that GetOpts is not natively supported on Windows).  `GetCmdOpt` supports retrieving multiple values for a single option key.
-
 Command line options have a mandatory `key` followed by zero or more optional `values`, all delimited by spaces.  Values can be integers, doubles, or strings.  Here are some examples of key/value pairs that can be parsed from the command line.  Here's what a real-life command line might look like:
 
 ```
