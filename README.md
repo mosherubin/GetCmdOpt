@@ -47,9 +47,7 @@ By default, command-line options are declared by prefixing them with the string 
 
     --rows 10 --fleet 1 2 3 --flag --verbose 0 --I ..\\foo\\bar \"c:\\Program Files\\blah\" --ratio 12.34 --height 1.2 3.4 777.888999
 
-## Parsing Functions Supported by GetCmdOpt
-
-## Member Functions
+## GetCmdOpt Member Functions
 
 `GetCmdOpts` supports the parsing of integer, double, string, and boolean command line values.  For the first three data types (i.e., integer, double, and string) it supports retrieving multiple values for a single key.  here is a table showing the functions:
 
@@ -73,6 +71,27 @@ The following table shows what the command key/values would look like:
 | Bool | `--flag-2 0` | false, `--enable-trace` value is "0" | GetBool |
 | Bool | `--flag-3 qwerty` | true, `--enable-trace` value is not "0" | GetBool |
 
+### Constructors
+
+```
+*GetCmdOpt (int argc, char *argv [], std::string keyPrefix = "--")*
+```
+
+**Description**
+
+Use the `GetCmdOpt` constructor to create an object that can then be probed for command line options.  It accepts
+
+**Parameters**
+
+    argc       [in] The original `argc` passed by the operating system to the program
+
+    argv       [in] The original `argv` passed by the operating system to the program
+           
+    keyPrefix  [in] An option string denoting the characters that are to prefix to all keys in the command line,
+                identifying the command line token as a key string rather than a value string.  The default key
+                prefix string is two successive hyphens ('--'), but this can be changed for a given program by
+                specifying a different string.
+    
 ### Single-Value Parse: GetInt, GetDouble, GetString, GetBool
 
 ```
