@@ -9,23 +9,24 @@
 class GetCmdOpt
 {
 public:
-	GetCmdOpt (int argc, char *argv [], std::string keyStart = "--");
+	GetCmdOpt (int argc, char *argv [], std::string keyPrefix = "--");
 	~GetCmdOpt ();
 
-	bool GetInt (const char *p, int& i);
-	bool GetIntVector (const char *p, std::vector<int> &vec);
-	bool GetNumber (const char *p, double& d);
-	bool GetNumberVector (const char *p, std::vector<double> &vec);
-	bool GetString (const char *p, std::string &s);
-	bool GetStringVector (const char *p, std::vector<std::string> &vec);
-	bool GetBool (const char *p);
+	bool GetInt (const char *key, int& value, int defaultVal);
+	bool GetIntVector (const char *key, std::vector<int> &vec);
+	bool GetDouble (const char *key, double& value, double defaultVal);
+	bool GetDoubleVector (const char *key, std::vector<double> &vec);
+	bool GetString (const char *key, std::string &value, const char * defaultVal);
+	bool GetStringVector (const char *key, std::vector<std::string> &vec);
+	bool GetBool (const char *key, bool &value ,bool defaultVal);
+	bool KeyExists(const char* key);
 
 protected:
 	int m_argc;
 	char **m_argv;
-	std::string m_keyStart;
+	std::string m_keyPrefix;
 
-	bool FindKey (const char *p, int *pIndex);
+	bool FindKey (const char *key, int *pIndex);
 	bool ReturnValueToken (int iIndex, const char **pToken);
 	bool TokenStartWithKeyPrefix(char *token);
 	int ReturnMaximumIntValue();

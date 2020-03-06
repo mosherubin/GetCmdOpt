@@ -12,13 +12,13 @@
 
 #pragma message ("Need to differentiate between a boolean flag and a similarly-named integer flag")
 
-GetCmdOpt::GetCmdOpt (int argc, char *argv [], std::string keyStart)
+GetCmdOpt::GetCmdOpt (int argc, char *argv [], std::string keyPrefix)
 {
 	int i;
 
 	m_argc = argc - 1;
 	m_argv = new char * [argc - 1];
-	m_keyStart = keyStart;
+	m_keyPrefix = keyPrefix;
 
 	// Make a local copy of all arguments.  Ignore the 0-th argument, as
 	// that is the name of the executable
@@ -83,38 +83,41 @@ bool GetCmdOpt::ConvertStringToInt(const char *s, int &i)
 	return true;
 }
 
-bool GetCmdOpt::GetInt (const char *p, int& i)
+bool GetCmdOpt::GetInt (const char *key, int& value, int defaultVal)
 {
 	int iIndex;
 	const char *pToken;
 	bool Ret = false;
 
-	assert (p);
-	if (p == 0)
+	assert (key);
+	if (key == 0)
 		return false;
 
-	if (!FindKey (p, &iIndex))
+	if (!FindKey(key, &iIndex))
+	{
+		value = defaultVal;
 		goto exit;
+	}
 
 	// So we found the option key.  Return next field as value, if valid.
 	if (ReturnValueToken (iIndex + 1, &pToken))
 	{
-		Ret = ConvertStringToInt(pToken, i);
+		Ret = ConvertStringToInt(pToken, value);
 	}
 
 exit:
 	return Ret;
 }
 
-bool GetCmdOpt::GetIntVector (const char *p, std::vector<int> &vec)
+bool GetCmdOpt::GetIntVector (const char *key, std::vector<int> &vec)
 {
 	// Return all integer instances of a specific key.
 
 	const char *pToken;
 	int i;
 
-	assert (p);
-	if (p == 0)
+	assert (key);
+	if (key == 0)
 		return false;
 
 	// TODO: The following code is a duplicate of FindKey(), simplify the code!
@@ -123,8 +126,8 @@ bool GetCmdOpt::GetIntVector (const char *p, std::vector<int> &vec)
 	vec.clear();
 
 	// Prepare the key string we're looking for
-	strKey += m_keyStart;
-	strKey += p;
+	strKey += m_keyPrefix;
+	strKey += key;
 
 	for (i=0; i<m_argc; i++)
 	{
@@ -146,19 +149,22 @@ bool GetCmdOpt::GetIntVector (const char *p, std::vector<int> &vec)
 	return (vec.size () > 0);
 }
 
-bool GetCmdOpt::GetNumber (const char *p, double& d)
+bool GetCmdOpt::GetDouble (const char *key, double& value, double defaultVal)
 {
 	int iIndex;
 	const char *pToken;
 	bool Ret = false;
 
-	if (!FindKey (p, &iIndex))
+	if (!FindKey(key, &iIndex))
+	{
+		value = defaultVal;
 		goto exit;
+	}
 
 	// So we found the option key.  Return next field as value, if valid.
 	if (ReturnValueToken (iIndex + 1, &pToken))
 	{
-		int result = sscanf(pToken, "%lf", &d);
+		int result = sscanf(pToken, "%lf", &value);
 		if ((result == 1) && (result != EOF))
 			Ret = true;
 	}
@@ -167,23 +173,23 @@ exit:
 	return Ret;
 }
 
-bool GetCmdOpt::GetNumberVector (const char *p, std::vector<double> &vec)
+bool GetCmdOpt::GetDoubleVector (const char *key, std::vector<double> &vec)
 {
 	// Return all integer instances of a specific key.
 
 	const char *pToken;
 	int i;
 
-	assert (p);
-	if (p == 0)
+	assert (key);
+	if (key == 0)
 		return false;
 
 	// TODO: The following code is a duplicate of FindKey(), simplify the code!
 	std::string strKey;
 
 	// Prepare the key string we're looking for
-	strKey += m_keyStart;
-	strKey += p;
+	strKey += m_keyPrefix;
+	strKey += key;
 
 	for (i=0; i<m_argc; i++)
 	{
@@ -208,7 +214,7 @@ bool GetCmdOpt::GetNumberVector (const char *p, std::vector<double> &vec)
 	return (vec.size () > 0);
 }
 
-bool GetCmdOpt::GetString (const char *p, std::string &s)
+bool GetCmdOpt::GetString (const char *key, std::string &value, const char *defaultVal)
 {
 	// Return a string following a key.  Double-quote delimited strings are
 	// automatically handled because DOS parses them correctly.
@@ -216,24 +222,28 @@ bool GetCmdOpt::GetString (const char *p, std::string &s)
 	const char *pToken;
 	int iIndex;
 
-	assert (p);
-	if (p == 0)
+	assert (key);
+	if (key == 0)
 		return false;
 
-	if (!FindKey (p, &iIndex))
+	if (!FindKey(key, &iIndex))
+	{
+		if (defaultVal)
+			value.assign(defaultVal);
 		return false;
+	}
 
 	// So we found the option key.  Return next field as value, if valid.
 	if (ReturnValueToken (iIndex + 1, &pToken))
 	{
-		s.assign (pToken);
+		value.assign (pToken);
 		return true;
 	}
 
 	return false;
 }
 
-bool GetCmdOpt::GetStringVector (const char *p, std::vector<std::string>& vec)
+bool GetCmdOpt::GetStringVector (const char *key, std::vector<std::string>& vec)
 {
 	// Return all string instances of a specific key.  Double-quote delimited strings are
 	// automatically handled because DOS parses them correctly.
@@ -241,15 +251,15 @@ bool GetCmdOpt::GetStringVector (const char *p, std::vector<std::string>& vec)
 	const char *pToken;
 	int i;
 
-	assert (p);
-	if (p == 0)
+	assert (key);
+	if (key == 0)
 		return false;
 
 	std::string strKey;
 
 	// Prepare the key string we're looking for
-	strKey += m_keyStart;
-	strKey += p;
+	strKey += m_keyPrefix;
+	strKey += key;
 
 	for (i=0; i<m_argc; i++)
 	{
@@ -274,40 +284,56 @@ bool GetCmdOpt::GetStringVector (const char *p, std::vector<std::string>& vec)
 	return (vec.size () > 0);
 }
 
-bool GetCmdOpt::GetBool (const char *p)
+bool GetCmdOpt::GetBool (const char *key, bool &value, bool defaultVal)
 {
 	int iIndex;
 	const char *pToken;
 
-	assert (p);
-	if (!p)
+	assert (key);
+	if (!key)
 		return false;
 
-	if (!FindKey(p, &iIndex))
+	if (!FindKey(key, &iIndex))
+	{
+		value = defaultVal;
 		return false;
+	}
 
 	if (!ReturnValueToken(iIndex+1, &pToken))
 	{
 		// There is no value token following the boolean key
+		value = true;
 		return true;
 	}
 
-	return (strcmp(pToken, "0") != 0);
+	value = strcmp(pToken, "0") != 0;
+
+	return true;
 }
 
-bool GetCmdOpt::FindKey (const char *p, int *piIndex)
+bool GetCmdOpt::KeyExists(const char* key)
+{
+	int iIndex;
+
+	if (!key)
+		return false;
+
+	return FindKey(key, &iIndex);
+}
+
+bool GetCmdOpt::FindKey (const char *key, int *piIndex)
 {
 	int i;
 	std::string strKey;
 	bool Ret = false;
 
-	assert (p);
-	if (!p)
+	assert (key);
+	if (!key)
 		goto exit;
 
 	// Prepare the key string we're looking for
-	strKey += m_keyStart;
-	strKey += p;
+	strKey += m_keyPrefix;
+	strKey += key;
 
 	for (i=0; i<m_argc; i++)
 	{
@@ -332,7 +358,7 @@ bool GetCmdOpt::TokenStartWithKeyPrefix(char *token)
 			&&
 			(strlen(token) >= 3)
 			&&
-			(strncmp(token, m_keyStart.c_str(), m_keyStart.size()) == 0)
+			(strncmp(token, m_keyPrefix.c_str(), m_keyPrefix.size()) == 0)
 		)
 		return true;
 	else
