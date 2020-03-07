@@ -39,4 +39,3 @@ private:
 
 
 #endif	/* GETCMDOPT_H_1800E12E_979F_4841_B34C_87DECB9F6237 */
-
